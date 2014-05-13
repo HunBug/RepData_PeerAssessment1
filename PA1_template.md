@@ -105,21 +105,13 @@ median(aggregate(data3$steps, by = list(data3$date), FUN = sum)$x)
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ```r
+library(lattice)
 data3$weekday <- as.POSIXlt(data3[, 2])$wday < 6
-
-weekdaily <- data3[data3$weekday, ]
-weekdaily <- aggregate(weekdaily$steps, by = list(weekdaily$interval), FUN = mean)
-
-weekendly <- data3[!data3$weekday, ]
-weekendly <- aggregate(weekendly$steps, by = list(weekendly$interval), FUN = mean)
-
-
-par(mfrow = c(2, 1), mar = c(2, 3, 1, 1), oma = c(0, 2, 0, 0))
-plot(weekendly$Group.1, weekendly$x, type = "l", ylab = "", main = "weekend", 
-    col = "blue", xlab = "", xaxt = "n")
-plot(weekdaily$Group.1, weekdaily$x, type = "l", ylab = "", main = "weekday", 
-    col = "blue", xlab = "")
-mtext("Number of steps", side = 2, outer = TRUE, font = 2)
+data4 <- aggregate(steps ~ interval + weekday, data = data3, FUN = mean)
+data4$weekday <- as.factor(data4$weekday)
+levels(data4$weekday) <- c("weekday", "weekend")
+xyplot(steps ~ interval | weekday, layout = c(1, 2), data = data4, type = "l", 
+    ylab = "Number of steps")
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
